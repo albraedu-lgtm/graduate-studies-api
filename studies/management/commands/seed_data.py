@@ -23,16 +23,16 @@ class Command(BaseCommand):
                                           first_name='مدير', last_name='النظام', is_staff=True, is_superuser=True)
         admin.groups.add(admin_group)
 
-        supervisor = User.objects.create_user('dr_ahmed', 'supervisor@rabat-university.edu.sd', 'admin123',
-                                               first_name='أحمد', last_name='محمد علي')
-        supervisor.groups.add(supervisor_group)
+        supervisor = User.objects.create_user('dr_ahmed', 'supervisor@learnnov.com', 'admin123',
+                                              first_name='أحمد', last_name='محمد علي')
+        supervisor_group.user_set.add(supervisor)
 
-        student1 = User.objects.create_user('student1', 'student@rabat-university.edu.sd', 'admin123',
-                                             first_name='محمد', last_name='عبدالله')
-        student1.groups.add(student_group)
+        student1 = User.objects.create_user('student1', 'student@learnnov.com', 'admin123',
+                                            first_name='محمد', last_name='عبدالله')
+        student_group.user_set.add(student1)
 
-        student2 = User.objects.create_user('student2', 'fatima@rabat-university.edu.sd', 'admin123',
-                                             first_name='فاطمة', last_name='أحمد')
+        student2 = User.objects.create_user('student2', 'fatima@learnnov.com', 'admin123',
+                                            first_name='فاطمة', last_name='أحمد')
         student2.groups.add(student_group)
 
         # Programs
@@ -75,5 +75,27 @@ class Command(BaseCommand):
         # Reports
         ProgressReport.objects.create(thesis=t1, submitted_by=student1, progress_percentage=65,
                                        summary='تم تدريب النموذج الأولي بدقة 92%', status='approved')
+
+        # Approvals (New System)
+        ApprovalRequest.objects.create(
+            requested_by=supervisor,
+            resource_type='ProgramEnrollment',
+            resource_id=str(e1.id),
+            action_type='status_change_to_graduated',
+            old_data={'status': e1.status},
+            new_data={'status': 'graduated'},
+            reason='إكمال جميع متطلبات التخرج بنجاح ومناقشة الرسالة.',
+            status='pending'
+        )
+        ApprovalRequest.objects.create(
+            requested_by=admin,
+            resource_type='ProgramEnrollment',
+            resource_id=str(e2.id),
+            action_type='gpa_override',
+            old_data={'gpa': float(e2.gpa)},
+            new_data={'gpa': 4.00},
+            reason='تصحيح خطأ في رصد الدرجة النهائية لمادة البحث.',
+            status='pending'
+        )
 
         self.stdout.write(self.style.SUCCESS('✅ Database seeded successfully!'))
