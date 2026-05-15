@@ -186,14 +186,19 @@ class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        email = request.data.get('email', '')
+        email_or_username = request.data.get('email', '')
         password = request.data.get('password', '')
+        user = None
         try:
-            user_obj = User.objects.get(email=email)
-            user = authenticate(username=user_obj.username, password=password)
+            # محاولة البحث بالإيميل أو اسم المستخدم
+            if '@' in email_or_username:
+                user_obj = User.objects.get(email=email_or_username)
+                user = authenticate(username=user_obj.username, password=password)
+            else:
+                user = authenticate(username=email_or_username, password=password)
         except User.DoesNotExist:
-            User().set_password(password) # Prevent User Enumeration Timing Attack
-            user = None
+            user = authenticate(username=email_or_username, password=password)
+        
         if user:
             refresh = RefreshToken.for_user(user)
             groups = list(user.groups.values_list('name', flat=True))
