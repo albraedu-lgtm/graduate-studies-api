@@ -8,7 +8,7 @@ from studies.views import (
     ResourceViewSet, StudentProfileViewSet, SupervisorProfileViewSet,
     CertificateViewSet, AttachmentViewSet, ThesisStageViewSet,
     FeedbackViewSet, AuditLogViewSet, NotificationViewSet,
-    CommentViewSet, StudyPlanViewSet
+    CommentViewSet, StudyPlanViewSet, HealthCheckView
 )
 
 router = DefaultRouter()
@@ -38,6 +38,7 @@ urlpatterns = [
     path('api/graduate/verify-certificate/<uuid:pk>/', CertificateViewSet.as_view({'get': 'verify_cert'})),
     path('api/user/v1/account/login_session/', LoginView.as_view()),
     path('api/user/v1/me/', UserInfoView.as_view()),
+    path('api/graduate/health/', HealthCheckView.as_view()),
 ]
 
 from django.conf import settings
