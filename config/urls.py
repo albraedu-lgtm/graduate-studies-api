@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 from rest_framework.routers import DefaultRouter
 from studies.views import (
     ProgramViewSet, EnrollmentViewSet, ThesisViewSet,
@@ -32,6 +33,7 @@ router.register('comments', CommentViewSet)
 router.register('study-plans', StudyPlanViewSet)
 
 urlpatterns = [
+    path('', lambda r: HttpResponse("Learnnov Backend is Running"), name='root'),
     path('admin/', admin.site.urls),
     path('api/graduate/', include(router.urls)),
     path('api/graduate/dashboard/', DashboardView.as_view()),
