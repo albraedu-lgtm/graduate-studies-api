@@ -10,6 +10,7 @@ from .models import *
 from .serializers import *
 from .permissions import IsAdmin, IsSupervisor, IsStudent, IsOwnerOrAdmin, IsAdminOrReadOnly
 import time
+from django.conf import settings
 
 
 class ProgramViewSet(viewsets.ModelViewSet):

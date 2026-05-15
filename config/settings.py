@@ -8,7 +8,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 if not DEBUG and SECRET_KEY == 'dev-secret-key-change-in-production-!@#$%':
     raise ValueError("SECRET_KEY must be set in production")
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'graduate-api.onrender.com,localhost,127.0.0.1,*').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
