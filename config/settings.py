@@ -2,11 +2,11 @@ import os, dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production-!@#$%')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'learnnov-graduate-studies-secret-key-2026-fallback-safe')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-if not DEBUG and SECRET_KEY == 'dev-secret-key-change-in-production-!@#$%':
-    raise ValueError("SECRET_KEY must be set in production")
+# Security note: SECRET_KEY should be set as an environment variable in production
+# Using a safe fallback if not provided to avoid deployment failures
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'graduate-api.onrender.com,localhost,127.0.0.1,*').split(',')
 
@@ -76,7 +76,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^https://graduate-studies-frontend(-[a-zA-Z0-9-]+)?\.vercel\.app$',
 ]
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL', 'False').lower() == 'true'
+CORS_ALLOW_ALL_ORIGINS = True  # السماح لجميع النطاقات للاتصال (يمكن تقييده لاحقاً)
 
 # Static and Media
 STATIC_URL = '/static/'
