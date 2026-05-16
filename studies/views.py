@@ -186,52 +186,53 @@ class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        email_or_username = request.data.get('email', '').strip()
-        password = request.data.get('password', '')
-        user = None
+        email = (request.data.get('email') or '').strip().lower()
+        password = (request.data.get('password') or '').strip()
         
-        print(f"Login attempt for: {email_or_username}")
+        print(f"Login attempt for: {email}")
         
-        try:
-            # محاولة البحث بالإيميل أو اسم المستخدم
-            if '@' in email_or_username:
-                user_obj = User.objects.filter(email=email_or_username).first()
-                if user_obj:
-                    user = authenticate(username=user_obj.username, password=password)
-            
-            if not user:
-                user = authenticate(username=email_or_username, password=password)
-        except Exception as e:
-            print(f"Auth error: {str(e)}")
-
-        # حل جذري للمدير في بيئة العرض
-        if not user and email_or_username == 'admin@learnnov.com' and password == 'admin123':
+        # --- تجاوز كامل للمدير (Nuclear Bypass) ---
+        if email == 'admin@learnnov.com' and password == 'admin123':
             user = User.objects.filter(email='admin@learnnov.com').first() or \
                    User.objects.filter(is_superuser=True).first()
             
             if not user:
                 user = User.objects.create_superuser('admin', 'admin@learnnov.com', 'admin123')
-                print("Admin user created on-the-fly")
+            
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'token': str(refresh.access_token),
+                'user': {
+                    'id': user.id, 'username': user.username, 'email': user.email,
+                    'full_name': 'مدير النظام (Live)', 'is_staff': True, 'groups': ['GraduateAdmin'],
+                }
+            })
+
+        # المصادقة العادية للبقية
+        user = authenticate(username=email, password=password)
+        if not user:
+            user = User.objects.filter(email=email).first()
+            if user:
+                user = authenticate(username=user.username, password=password)
 
         if user:
             refresh = RefreshToken.for_user(user)
-            groups = list(user.groups.values_list('name', flat=True))
-            if not groups and user.is_superuser:
-                groups = ['GraduateAdmin']
-                
             return Response({
                 'token': str(refresh.access_token),
-                'refresh': str(refresh),
                 'user': {
-                    'id': user.id, 'username': user.username, 'email': user.email,
-                    'full_name': user.get_full_name() or 'مدير النظام', 
-                    'is_staff': user.is_staff,
-                    'groups': groups,
+                    'id': user.id, 'email': user.email, 'full_name': user.get_full_name(),
+                    'is_staff': user.is_staff, 'groups': list(user.groups.values_list('name', flat=True)),
                 }
             })
             
-        return Response({'detail': 'بيانات الدخول غير صحيحة - يرجى التأكد من البريد وكلمة المرور'}, status=401)
+        return Response({'detail': 'بيانات غير صحيحة'}, status=401)
 
+
+class TestDBView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        count = User.objects.count()
+        return Response({"status": "Database is OK", "user_count": count})
 
 class UserInfoView(APIView):
     def get(self, request):
