@@ -71,12 +71,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:5173',
 ]
-# السماح بنطاق Vercel الخاص بالمشروع فقط وعدم السماح بأي نطاق عشوائي
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^https://graduate-studies-frontend(-[a-zA-Z0-9-]+)?\.vercel\.app$',
-]
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # السماح لجميع النطاقات للاتصال (يمكن تقييده لاحقاً)
+CORS_ALLOW_ALL_ORIGINS = False  # يجب أن يكون False عند استخدام Credentials
 
 # Static and Media
 STATIC_URL = '/static/'
