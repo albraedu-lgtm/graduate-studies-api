@@ -37,8 +37,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/graduate/', include(router.urls)),
     path('api/graduate/dashboard/', DashboardView.as_view()),
-    path('api/graduate/verify-certificate/<uuid:pk>/', CertificateViewSet.as_view({'get': 'verify_cert'})),
     path('api/login/', LoginView.as_view()),
+    path('api/test-db/', TestDBView.as_view()),
     path('api/user/v1/account/login_session/', LoginView.as_view()), # Keep as fallback
     path('api/user/v1/me/', UserInfoView.as_view()),
     path('health/', HealthCheckView.as_view()),
